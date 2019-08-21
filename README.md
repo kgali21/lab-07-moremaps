@@ -5,7 +5,7 @@
 
 ## Overview
 This application creates a guide to the city of Portland based on weather and events.  
-As servecd on https://city-explorer-2001.herokuapp.com/
+As servecd on https://city-explorer-2002.herokuapp.com/
 
 ## Getting Started
 npm install
