@@ -69,8 +69,9 @@ function toWeather(weather) {
     pathToData.map(data => {
         let dataObject = {
             forecast: data.summary,
-            time: data.time
+            time: new Date(data.time * 1000).toISOString()
         };
+        console.log(new Date(data.time * 1000).toISOString());
         dataArray.push(dataObject);
     });
     console.log(dataArray);
