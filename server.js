@@ -4,46 +4,35 @@ require('dotenv').config();
 //application dependecies
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
 
+//api service dependencies
+const mapApi = require('./lib/map-api');
 //application setup
-//make express api
+
 const app = express();
 
 //get port on which to run app
 const PORT = process.env.PORT;
 
 //enable cors
+app.use(morgan('dev'));
 app.use(cors());
 
 //API routes
 app.get('/location', (request, response) => {
-    try {
-        //use express built-in query object
-        const location = request.query.location;
-        const result = getLatLng(location);
-        response.status(200).json(result);
-    }
-    catch(err) {
-        response.status(500).send('Sorry, something went wrong please try again.');
-    }
+    const search = request.query.search;
+    mapApi.getLocation(search)
+        .then(location => {
+            response.json(location);
+        })
+        .catch(err => {
+            response.status(500).json({
+                error: err.message || err
+            });
+        });
+
 });
-
-const geoData = require('./data/geo.json');
-
-function getLatLng(/*placeholder for api*/) {
-    //api call will go here
-    return toLocation(geoData);
-}
-
-function toLocation(geoData) {
-    const firstResponse = geoData.results[0];
-    const geometry = firstResponse.geometry;
-    return {
-        formatted_query: firstResponse.formatted_address,
-        latitude: geometry.location.lat,
-        longitude: geometry.location.lng
-    };
-}
 
 app.get('/weather', (request, response) => {
     try {
