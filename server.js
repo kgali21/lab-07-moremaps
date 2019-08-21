@@ -9,6 +9,7 @@ const morgan = require('morgan');
 //api service dependencies
 const mapApi = require('./lib/map-api');
 const weatherApi = require('./lib/weather-api');
+const eventsApi = require('./lib/events-api');
 //application setup
 
 const app = express();
@@ -50,6 +51,20 @@ app.get('/weather', (request, response) => {
         });
 });
 
+app.get('/events', (request, response) => {
+    const lat = request.query.latitude;
+    const lng = request.query.longitude;
+
+    eventsApi.getEvents(lat, lng)
+        .then(event => {
+            response.json(event);
+        })
+        .catch(err => {
+            response.status(500).json({
+                error: err.message || err
+            });
+        });
+});
 app.listen(PORT, () => {
     console.log('server running on PORT', PORT);
 });
