@@ -8,6 +8,7 @@ const morgan = require('morgan');
 
 //api service dependencies
 const mapApi = require('./lib/map-api');
+const weatherApi = require('./lib/weather-api');
 //application setup
 
 const app = express();
@@ -35,37 +36,19 @@ app.get('/location', (request, response) => {
 });
 
 app.get('/weather', (request, response) => {
-    try {
-        const weather = request.query.weather;
-        const result = getWeather(weather);
-        response.status(200).json(result);
-    }
-    catch(err) {
-        response.status(500).send('Oops, something went wrong please try again.');
-    }
+    const lat = request.query.latitude;
+    const lng = request.query.longitude;
+
+    weatherApi.getWeather(lat, lng)
+        .then(forecast => {
+            response.json(forecast);
+        })
+        .catch(err => {
+            response.status(500).json({
+                error: err.message || err
+            });
+        });
 });
-
-const weather = require('./data/darksky.json');
-
-function getWeather(/*weather*/) {
-    //api call will go here
-    return toWeather(weather);
-}
-
-function toWeather(weather) {
-    const pathToData = weather.daily.data;
-    let dataArray = [];
-    pathToData.map(data => {
-        let dataObject = {
-            forecast: data.summary,
-            time: new Date(data.time * 1000).toISOString()
-        };
-        console.log(new Date(data.time * 1000).toISOString());
-        dataArray.push(dataObject);
-    });
-    console.log(dataArray);
-    return dataArray;
-}
 
 app.listen(PORT, () => {
     console.log('server running on PORT', PORT);
