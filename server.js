@@ -66,13 +66,14 @@ function getWeather(/*weather*/) {
 function toWeather(weather) {
     const pathToData = weather.daily.data;
     let dataArray = [];
-    for(let i = 0; i < pathToData.length; i++) {
+    pathToData.map(data => {
         let dataObject = {
-            forecast: pathToData[i].summary,
-            time: pathToData[i].time
+            forecast: data.summary,
+            time: data.time
         };
         dataArray.push(dataObject);
-    }
+    });
+    console.log(dataArray);
     return dataArray;
 }
 
